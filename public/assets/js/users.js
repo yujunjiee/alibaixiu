@@ -1,0 +1,38 @@
+//监听提交事件
+$('#userForm').on('submit',function(){
+  //serialize 第一点，保证form表单每一个input要有一个name属性
+  // console.log($('#userForm').serialize());//自动收集表单数据
+  $.ajax({
+    type:'post',//get或post
+    url:'/users',//请求的地址
+    data:$('#userForm').serialize(),//如果不需要传，则注释掉 请求的参数，a=1&b=2或{a:1,b:2}或者jq中的serialize方法，或者formData收集
+    // dataType:'json',
+    success:function(result){//成功的回调函数
+      // console.log(result)
+      location.reload();//刷新当前页面
+    }
+  })
+  //阻止默认行为
+  return false;
+})
+
+//上传用户头像
+$('#avatar').on('change', function() {
+  var formData = new FormData();
+  formData.append('avatar', this.files[0]);
+  //jq中$.ajax默认的contentType值是'application/x-www-form=urlendcoded'
+  //jq中$.ajax默认会吧数据变成key=value&key=value的形式，我们现在是不需要，因为数据是二进制的数据
+  $.ajax({
+    type:'post',//get或post
+    url:'/upload',//请求的地址
+    contentType:false,
+    processData:false,
+    data:formData,//如果不需要传，则注释掉 请求的参数，a=1&b=2或{a:1,b:2}或者jq中的serialize方法，或者formData收集
+    dataType:'json',
+    success:function(result){//成功的回调函数
+      // console.log(result)
+      $('#preview').attr('src',result[0].avatar)
+      $('#hiddenImg').val(result[0].avatar)
+    }
+  })
+  })
