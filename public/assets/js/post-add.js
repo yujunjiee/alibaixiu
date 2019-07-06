@@ -13,8 +13,11 @@ $.ajax({
 
 
 //图标上传和预览
-$('#feature').on('change',function(){
-  console.dir(this);
+// $('#feature').on('change',function(){
+// })
+
+$('#paerntBox').on('change', '#hiddenImg', function(){
+  // console.dir(this);
   var formData = new FormData();
   formData.append('avatar',this.files[0]);
   //formData 原生ajax来写
@@ -28,12 +31,13 @@ $('#feature').on('change',function(){
     processData:false,
     data:formData,
     success:function(result){//成功的回调函数
-      console.log(result)
+      // console.log(result)
       //图片效果预览
       $('.thumbnail').attr('src',result[0].avatar).show();
       $('#hiddenImg').val(result[0].avatar)
     }
   })
+  return false;
 })
 
 
@@ -62,3 +66,40 @@ function getUrlParams(name){
   }
   return -1;
 }
+
+//获取id值，如果id不存在，说明在添加，如果存在说明在修改
+var id = getUrlParams('id');
+if(id != -1) {
+  $.ajax({
+    type: 'get',
+    url: '/posts/' + id,
+    success: function(result) {
+      $.ajax({
+        url: '/categories',
+        type: 'get',
+        success: function(response) {
+          result.categories = response;
+          console.log(response);
+          var html = template('modifyTpl', result);
+          $('#parentBox').html(html);
+        }
+      })
+    }
+  })
+}
+
+//当修改文章信息表单发生提交行为的时候
+//通过事件委托方式
+$('#parentBox').on('submit','#addForm', function(){
+  var id = $(this).attr('data-id');
+  $.ajax({
+    type:'put',//get或post
+    url:'/posts/'+ id,//请求的地址
+    data:$(this).serialize(),
+    success:function(result){//成功的回调函数
+      console.log(result)
+      location.href = 'posts.html'
+    }
+  })
+  return false;
+})

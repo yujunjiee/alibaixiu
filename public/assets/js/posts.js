@@ -8,7 +8,6 @@ function dateFormat(str) {
 
 //如果我们没有传入page，默认会显示第一页
 var page = 1;//如果没有切换就显示第一页
-
 render();
 function changePage(currentPage) {
   page = currentPage;
@@ -67,4 +66,19 @@ $('#filterForm').on('submit', function(){
     }
   })
   return false;
+})
+
+//删除功能
+$('#postsBox').on('click','.delete', function(){
+  if(confirm('确定要删除吗？')){
+    //获取id值
+    var id = $(this).attr('data-id');
+    $.ajax({
+      type:'delete',//get或post
+      url:'/posts/'+ id,//请求的地址
+      success:function(result){//成功的回调函数
+        location.reload();
+      }
+    })
+  }
 })
