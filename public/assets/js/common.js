@@ -17,3 +17,15 @@ $('#logout').on('click', function () {
     return false;
   }
 })
+
+//向服务器发送请求，索要登陆用户信息
+$.ajax({
+  type:'get',//get或post
+  url:'/users/'+ userId,//请求的地址
+  success:function(result){//成功的回调函数
+    console.log(result)
+    $('.profile .avatar').attr('src',result.avatar);
+    $('.profile .name').html(result.nickName);
+    $('.profile').show();
+  }
+})
